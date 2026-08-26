@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(v311_start_error) {
                 };
                 co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
 
-                auto connack_opt = co_await cl.async_start(
+                co_await cl.async_start(
                     true,             // clean_session
                     std::uint16_t(0), // keep_alive
                     "cid1",
@@ -606,7 +606,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe_mismatch) {
                     "topic1",
                 };
 
-                auto unsuback_opt = co_await(
+                co_await(
                     cl.async_unsubscribe(
                         pid,
                         unsub_entry,

@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -78,19 +79,19 @@ BOOST_AUTO_TEST_CASE(v311_disconnect_error) {
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v3_1_1::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\xe0"sv}; // short
+        auto buf = make_exact_buffer("\xe0"sv); // short
         am::error_code ec;
         am::v3_1_1::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\xe0\x01"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\xe0\x01"sv); // invalid remaining length
         am::error_code ec;
         am::v3_1_1::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

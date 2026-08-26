@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -273,91 +274,101 @@ BOOST_AUTO_TEST_CASE(v5_puback_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP
-        am::buffer buf{"\x40"sv}; // short
+        auto buf = make_exact_buffer("\x40"sv); // short
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x40\x01"sv}; // remaining length buf mismatch
+        auto buf = make_exact_buffer("\x40\x01"sv); // remaining length buf mismatch
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x40\x03"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\x40\x03"sv); // invalid remaining length
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID
-        am::buffer buf{"\x40\x02\x12\x34"sv}; // valid
+        auto buf = make_exact_buffer("\x40\x02\x12\x34"sv); // valid
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  PID
-        am::buffer buf{"\x40\x02\x12\x34\x00"sv}; // remaining length mismatch
+        auto buf = make_exact_buffer("\x40\x02\x12\x34\x00"sv); // remaining length mismatch
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID     RC
-        am::buffer buf{"\x40\x03\x12\x34\x00"sv}; // valid
+        auto buf = make_exact_buffer("\x40\x03\x12\x34\x00"sv); // valid
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  PID     RC
-        am::buffer buf{"\x40\x03\x12\x34\x84"sv}; // invalid rc
+        auto buf = make_exact_buffer("\x40\x03\x12\x34\x84"sv); // invalid rc
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID     RC
-        am::buffer buf{"\x40\x03\x12\x34\x00\x00"sv}; // remaining length mismatch
+        auto buf = make_exact_buffer("\x40\x03\x12\x34\x00\x00"sv); // remaining length mismatch
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID     RC  PL
-        am::buffer buf{"\x40\x04\x12\x34\x00\x00"sv}; // valid
+        auto buf = make_exact_buffer("\x40\x04\x12\x34\x00\x00"sv); // valid
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  PID     RC  PL
-        am::buffer buf{"\x40\x05\x12\x34\x00\x00\x00"sv}; // property length mismatch
+        auto buf = make_exact_buffer("\x40\x05\x12\x34\x00\x00\x00"sv); // property length mismatch
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID     RC  PL
-        am::buffer buf{"\x40\x05\x12\x34\x00\x02\x00"sv}; // property length mismatch
+        auto buf = make_exact_buffer("\x40\x05\x12\x34\x00\x02\x00"sv); // property length mismatch
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID     RC  PL
-        am::buffer buf{"\x40\x07\x12\x34\x00\xff\xff\xff\x80"sv}; // over property length
+        auto buf = make_exact_buffer("\x40\x07\x12\x34\x00\xff\xff\xff\x80"sv); // over property length
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        // GHSA-fwh8-wcr5-q65c (related hardening)
+        // remaining length claims a reason code but buffer ends after packet id.
+        // Must be rejected without reading past the end of the buffer.
+        //                CP  RL  PID
+        auto buf = make_exact_buffer("\x40\x03\x00\x01"sv); // no reason code
         am::error_code ec;
         am::v5::puback_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

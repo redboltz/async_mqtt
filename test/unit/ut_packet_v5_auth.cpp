@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -206,77 +207,77 @@ BOOST_AUTO_TEST_CASE(v5_auth_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP
-        am::buffer buf{"\xf0"sv}; // short
+        auto buf = make_exact_buffer("\xf0"sv); // short
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xf0\x01"sv}; // remaining length buf mismatch
+        auto buf = make_exact_buffer("\xf0\x01"sv); // remaining length buf mismatch
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xf0\x00"sv}; // valid
+        auto buf = make_exact_buffer("\xf0\x00"sv); // valid
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL
-        am::buffer buf{"\xf0\x00\x00"sv}; // too long
+        auto buf = make_exact_buffer("\xf0\x00\x00"sv); // too long
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC
-        am::buffer buf{"\xf0\x01\x92"sv}; // invalid rc
+        auto buf = make_exact_buffer("\xf0\x01\x92"sv); // invalid rc
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC
-        am::buffer buf{"\xf0\x01\x18"sv}; // valid
+        auto buf = make_exact_buffer("\xf0\x01\x18"sv); // valid
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xf0\x02\x18\x00"sv}; // valid
+        auto buf = make_exact_buffer("\xf0\x02\x18\x00"sv); // valid
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xf0\x02\x18\x00\x00"sv}; // too long
+        auto buf = make_exact_buffer("\xf0\x02\x18\x00\x00"sv); // too long
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xf0\x02\x18\x80"sv}; // invalid property length
+        auto buf = make_exact_buffer("\xf0\x02\x18\x80"sv); // invalid property length
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xf0\x02\x18\x01"sv}; // property length mismatch
+        auto buf = make_exact_buffer("\xf0\x02\x18\x01"sv); // property length mismatch
         am::error_code ec;
         am::v5::auth_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
